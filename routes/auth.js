@@ -1,8 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { query } = require('../db');
-const { authMiddleware } = require('../middleware/auth');
+const { authMiddleware, csrfProtection } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -14,10 +15,20 @@ function signToken(user) {
       email: user.email,
       name: user.name,
       role: user.role || 'user',
+      isOriginalAdmin: Boolean(user.isOriginalAdmin ?? user.is_original_admin),
     },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
+}
+
+function setAdminCookies(res, token) {
+  const secure = process.env.NODE_ENV === 'production' ? '; Secure' : '';
+  const csrfToken = crypto.randomBytes(24).toString('hex');
+  res.setHeader('Set-Cookie', [
+    `somalinet_admin_session=${encodeURIComponent(token)}; HttpOnly; Path=/; SameSite=Lax; Max-Age=28800${secure}`,
+    `somalinet_csrf=${csrfToken}; Path=/; SameSite=Lax; Max-Age=28800${secure}`,
+  ]);
 }
 
 router.post('/register', async (req, res, next) => {
@@ -45,14 +56,14 @@ router.post('/register', async (req, res, next) => {
     const passwordHash = await bcrypt.hash(password, 10);
 
     const { rows } = await query(
-      `INSERT INTO users (name, phone, email, password)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO users (name, phone, email, password, role)
+       VALUES ($1, $2, $3, $4, 'USER')
        RETURNING id, name, phone, email, created_at`,
       [name, normalizedPhone, email || null, passwordHash]
     );
 
     const user = rows[0];
-    const token = signToken({ ...user, role: 'user' });
+    const token = signToken({ ...user, role: 'USER' });
 
     res.status(201).json({
       message: 'Isticmaalaha si guul leh ayaa la diiwaangeliyay',
@@ -74,7 +85,7 @@ router.post('/login', async (req, res, next) => {
 
     const normalizedPhone = String(phone).replace(/\D/g, '');
     const { rows } = await query(
-      'SELECT * FROM users WHERE phone = $1',
+      'SELECT * FROM users WHERE phone = $1 AND role = \'USER\' AND suspended = FALSE',
       [normalizedPhone]
     );
 
@@ -99,7 +110,7 @@ router.post('/login', async (req, res, next) => {
         phone: user.phone,
         email: user.email,
         created_at: user.created_at,
-        role: 'user',
+        role: 'USER',
       },
     });
   } catch (err) {
@@ -108,33 +119,35 @@ router.post('/login', async (req, res, next) => {
 });
 
 router.post('/admin-login', async (req, res) => {
-  const { phone, password } = req.body;
-  const configuredPhone = String(process.env.ADMIN_PHONE || '').replace(/\D/g, '');
-  const configuredPassword = String(process.env.ADMIN_PASSWORD || '');
-  const normalizedPhone = String(phone || '').replace(/\D/g, '');
+  const email = String(req.body.email || '').trim().toLowerCase();
+  const password = String(req.body.password || '');
+  if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
 
-  if (!configuredPhone || !configuredPassword) {
-    return res.status(503).json({ error: 'Admin access has not been configured' });
-  }
+  const { rows } = await query(
+    'SELECT id, name, phone, email, password, role, is_original_admin FROM users WHERE LOWER(email) = $1 AND role = $2 AND suspended = FALSE',
+    [email, 'ADMIN']
+  );
+  const user = rows[0];
+  const valid = user ? await bcrypt.compare(password, user.password) : false;
+  if (!valid) return res.status(401).json({ error: 'Admin email or password is incorrect' });
 
-  if (normalizedPhone !== configuredPhone || password !== configuredPassword) {
-    return res.status(401).json({ error: 'Admin phone or password is incorrect' });
-  }
+  const publicUser = { id: user.id, name: user.name, phone: user.phone, email: user.email, role: 'ADMIN', isOriginalAdmin: Boolean(user.is_original_admin) };
+  setAdminCookies(res, signToken(publicUser));
+  res.json({ user: publicUser });
+});
 
-  const user = {
-    id: 'admin',
-    name: 'SomaliNet Admin',
-    phone: configuredPhone,
-    role: 'admin',
-  };
-
-  res.json({ token: signToken(user), user });
+router.post('/admin-logout', authMiddleware, csrfProtection, (_req, res) => {
+  res.setHeader('Set-Cookie', [
+    `somalinet_admin_session=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`,
+    `somalinet_csrf=; Path=/; SameSite=Lax; Max-Age=0${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`,
+  ]);
+  res.json({ message: 'Admin session ended' });
 });
 
 router.get('/me', authMiddleware, async (req, res, next) => {
   try {
     const { rows } = await query(
-      'SELECT id, name, phone, email, created_at FROM users WHERE id = $1',
+      'SELECT id, name, phone, email, role, created_at FROM users WHERE id = $1',
       [req.user.userId]
     );
 

@@ -1,13 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="so">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#09151f" />
-  <title>SomaliNet | Connect</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title data-i="pageTitle">SomaliNet | Connect</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
@@ -15,15 +12,22 @@
     <div class="phone-frame">
       <main class="content-panel">
         <section class="brand-panel">
-          <h1>SOMALINET</h1>
+          <div class="language-row">
+            <div class="language-switch" role="group" aria-label="Language">
+              <button type="button" data-lang="so" aria-pressed="true">SO</button>
+              <button type="button" data-lang="en" aria-pressed="false">EN</button>
+            </div>
+          </div>
+          <header class="site-header">
+            <h1 data-i="brand">SOMALINET</h1>
+          </header>
         </section>
 
         <section class="packages-panel">
-          <h2>Unlimited packages</h2>
+          <h2 data-i="packagesTitle">Xirmooyin aan xad lahayn</h2>
           <div id="plans-grid" class="plans-list" aria-live="polite"></div>
           <div class="account-tools">
-            <button id="logout-button" class="secondary-button hidden" type="button">Sign out</button>
-            <button id="admin-access-button" class="text-link" type="button">Admin access</button>
+            <button id="logout-button" class="secondary-button hidden" type="button" data-i="signOut">Ka bax</button>
           </div>
         </section>
       </main>
@@ -32,33 +36,33 @@
 
   <div id="auth-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
     <div class="modal auth-modal">
-      <button class="close-button" type="button" data-close-modal="auth-modal" aria-label="Close">×</button>
+      <button class="close-button" type="button" data-close-modal="auth-modal" aria-label="Close" data-aria-i="close">×</button>
       <div class="modal-head">
-        <p class="modal-kicker">SomaliNet account</p>
-        <h3 id="auth-title">Welcome back</h3>
+        <p class="modal-kicker" data-i="account">Akoonka SomaliNet</p>
+        <h3 id="auth-title" data-i="welcomeBack">Soo dhawoow</h3>
       </div>
 
       <form id="auth-form">
         <div id="auth-name-wrap" class="field hidden">
-          <label for="auth-name">Your name</label>
-          <input id="auth-name" name="name" type="text" placeholder="Enter full name" />
+          <label for="auth-name" data-i="yourName">Magacaaga</label>
+          <input id="auth-name" name="name" type="text" data-ph="fullNamePlaceholder" />
         </div>
 
         <div class="field">
-          <label for="auth-phone">Phone number</label>
-          <input id="auth-phone" name="phone" type="tel" placeholder="e.g. 0612345678" required />
+          <label for="auth-phone" data-i="phoneNumber">Lambarka telefoonka</label>
+          <input id="auth-phone" name="phone" type="tel" data-ph="phonePlaceholder" required />
         </div>
 
         <div class="field">
-          <label for="auth-password">Password</label>
-          <input id="auth-password" name="password" type="password" placeholder="••••••••" required />
+          <label for="auth-password" data-i="password">Furaha sirta</label>
+          <input id="auth-password" name="password" type="password" data-ph="passwordPlaceholder" required />
         </div>
 
-        <button class="primary-button full" type="submit" id="auth-submit">Sign in</button>
+        <button class="primary-button full" type="submit" id="auth-submit" data-i="signIn">Gal</button>
 
         <div class="auth-toggle-row">
-          <span id="auth-toggle-copy">Need an account?</span>
-          <button id="auth-toggle" type="button" class="text-link">Create one</button>
+          <span id="auth-toggle-copy" data-i="needAccount">Akoon ma lihid?</span>
+          <button id="auth-toggle" type="button" class="text-link" data-i="createOne">Samee akoon</button>
         </div>
 
         <p id="auth-error" class="form-error"></p>
@@ -68,14 +72,14 @@
 
   <div id="payment-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
     <div class="modal payment-modal">
-      <button class="close-button" type="button" data-close-modal="payment-modal" aria-label="Close">×</button>
+      <button class="close-button" type="button" data-close-modal="payment-modal" aria-label="Close" data-aria-i="close">×</button>
       <div class="modal-head">
-        <p class="modal-kicker">Secure checkout</p>
-        <h3>Buy internet</h3>
+        <p class="modal-kicker" data-i="secureCheckout">Lacag-bixin ammaan ah</p>
+        <h3 data-i="buyInternet">Iibso internet</h3>
       </div>
 
       <div class="plan-summary">
-        <span id="payment-plan-name">Package</span>
+        <span id="payment-plan-name" data-i="package">Xirmo</span>
         <strong id="payment-plan-price">SOS 0</strong>
       </div>
 
@@ -83,8 +87,8 @@
         <button class="provider-option" type="button" data-provider="evc">
           <span class="provider-brand evc">E</span>
           <span>
-            <strong>EVC Plus</strong>
-            <small>Hormuud</small>
+            <strong data-i="evcPlus">EVC Plus</strong>
+            <small data-i="hormuud">Hormuud</small>
           </span>
           <span class="arrow">→</span>
         </button>
@@ -92,8 +96,8 @@
         <button class="provider-option" type="button" data-provider="zaad">
           <span class="provider-brand zaad">Z</span>
           <span>
-            <strong>Zaad</strong>
-            <small>Telesom</small>
+            <strong data-i="zaad">Zaad</strong>
+            <small data-i="telesom">Telesom</small>
           </span>
           <span class="arrow">→</span>
         </button>
@@ -101,8 +105,8 @@
         <button class="provider-option" type="button" data-provider="sahal">
           <span class="provider-brand sahal">S</span>
           <span>
-            <strong>Sahal</strong>
-            <small>Golis</small>
+            <strong data-i="sahal">Sahal</strong>
+            <small data-i="golis">Golis</small>
           </span>
           <span class="arrow">→</span>
         </button>
@@ -110,60 +114,60 @@
 
       <form id="payment-form" class="hidden">
         <div class="field">
-          <label for="payment-phone">Mobile money number</label>
-          <input id="payment-phone" type="tel" placeholder="Enter number to pay from" required />
+          <label for="payment-phone" data-i="mobileMoneyNumber">Lambarka lacagta moobilka</label>
+          <input id="payment-phone" type="tel" data-ph="paymentNumberPlaceholder" required />
         </div>
 
         <div class="field">
-          <label for="payment-mac">Device MAC <span>(optional)</span></label>
-          <input id="payment-mac" type="text" placeholder="For automatic hotspot login" />
+          <label for="payment-mac"><span data-i="deviceMac">MAC-ka qalabka</span> <span data-i="optional">(ikhtiyaari)</span></label>
+          <input id="payment-mac" type="text" data-ph="macPlaceholder" />
         </div>
 
-        <button class="primary-button full" type="submit">Confirm payment</button>
+        <button class="primary-button full" type="submit" data-i="confirmPayment">Xaqiiji lacag-bixinta</button>
         <p id="payment-error" class="form-error"></p>
       </form>
 
       <div id="payment-success" class="success-box hidden">
         <div class="success-mark">✓</div>
-        <h4>Payment sent successfully</h4>
-        <p>Your internet session will be activated shortly.</p>
-        <button class="primary-button" type="button" data-close-modal="payment-modal">Done</button>
+        <h4 data-i="paymentSuccess">Lacag-bixinta waa la diray</h4>
+        <p data-i="sessionActivating">Fadhiga internet-kaaga dhawaan ayaa la hawlgelinayaa.</p>
+        <button class="primary-button" type="button" data-close-modal="payment-modal" data-i="done">Dhammay</button>
       </div>
     </div>
   </div>
 
   <div id="admin-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
     <div class="modal admin-modal">
-      <button class="close-button" type="button" data-close-modal="admin-modal" aria-label="Close">×</button>
+      <button class="close-button" type="button" data-close-modal="admin-modal" aria-label="Close" data-aria-i="close">×</button>
       <div class="modal-head">
-        <p class="modal-kicker">Restricted area</p>
-        <h3>Admin access</h3>
+        <p class="modal-kicker" data-i="restrictedArea">Aag xaddidan</p>
+        <h3 data-i="adminAccess">Gelitaanka maamulka</h3>
       </div>
 
       <form id="admin-login-form">
         <div class="field">
-          <label for="admin-phone">Admin phone</label>
-          <input id="admin-phone" type="tel" placeholder="Admin phone number" required />
+          <label for="admin-phone" data-i="adminPhone">Telefoonka maamulka</label>
+          <input id="admin-phone" type="tel" data-ph="adminPhonePlaceholder" required />
         </div>
         <div class="field">
-          <label for="admin-password">Admin password</label>
-          <input id="admin-password" type="password" placeholder="Admin password" required />
+          <label for="admin-password" data-i="adminPassword">Furaha maamulka</label>
+          <input id="admin-password" type="password" data-ph="adminPasswordPlaceholder" required />
         </div>
-        <button class="primary-button full" type="submit">Open dashboard</button>
+        <button class="primary-button full" type="submit" data-i="openDashboard">Fur dashboard-ka</button>
         <p id="admin-error" class="form-error"></p>
       </form>
 
       <div id="admin-dashboard" class="hidden">
         <div class="admin-toolbar">
-          <strong>Dashboard</strong>
-          <button id="admin-logout-button" class="text-link" type="button">Sign out</button>
+          <strong data-i="dashboard">Dashboard</strong>
+          <button id="admin-logout-button" class="text-link" type="button" data-i="signOut">Ka bax</button>
         </div>
         <div class="admin-stats">
-          <div><span>Revenue</span><strong id="admin-revenue">SOS 0</strong></div>
-          <div><span>Transactions</span><strong id="admin-transactions">0</strong></div>
-          <div><span>Active sessions</span><strong id="admin-sessions">0</strong></div>
+          <div><span data-i="revenue">Dakhliga</span><strong id="admin-revenue">SOS 0</strong></div>
+          <div><span data-i="transactions">Macaamilada</span><strong id="admin-transactions">0</strong></div>
+          <div><span data-i="activeSessions">Fadhiyada firfircoon</span><strong id="admin-sessions">0</strong></div>
         </div>
-        <h4>Recent users</h4>
+        <h4 data-i="recentUsers">Isticmaalayaashii u dambeeyay</h4>
         <div id="admin-users" class="admin-users"></div>
       </div>
     </div>

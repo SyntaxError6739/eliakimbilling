@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101c2d">
+  <title>Admin sign in | SomaliNet</title>
+  <style>
+    :root { color-scheme: light dark; --ink: #172235; --muted: #66758a; --paper: #f4f7fb; --panel: rgba(255,255,255,.92); --line: #dce4ee; --navy: #10213d; --blue: #246bdb; --cyan: #46c5bd; --danger: #b42318; --shadow: 0 24px 70px rgba(17, 38, 70, .18); }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body { margin: 0; color: var(--ink); background: radial-gradient(circle at 8% 10%, #d9f2ef 0, transparent 28%), linear-gradient(135deg, #0d1d36 0 42%, #17385b 42% 100%); font-family: "Segoe UI", system-ui, sans-serif; }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    .login-layout { display: grid; grid-template-columns: minmax(300px, 1fr) minmax(360px, 520px); gap: clamp(24px, 7vw, 100px); width: min(1240px, 100%); min-height: 100vh; margin: 0 auto; padding: clamp(24px, 6vw, 72px); align-items: center; }
+    .login-intro { display: flex; flex-direction: column; justify-content: space-between; min-height: min(720px, 82vh); padding: 6px 0; color: #fff; }
+    .brand-mark { color: #fff; text-decoration: none; font-size: 1.08rem; font-weight: 800; letter-spacing: .12em; }
+    .brand-mark span { color: #7ce0d6; font-size: .68rem; letter-spacing: .16em; margin-left: 5px; }
+    .eyebrow { margin: 0 0 12px; color: var(--cyan); font-size: .72rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .login-intro h1 { max-width: 560px; margin: 0; color: #fff; font-size: clamp(3rem, 6vw, 6rem); line-height: .96; letter-spacing: -.055em; }
+    .intro-copy { max-width: 430px; margin: 24px 0 0; color: #c6d6e7; font-size: 1.02rem; line-height: 1.75; }
+    .intro-foot { margin: 0; color: #91a9c2; font-size: .84rem; }
+    .login-panel { padding: clamp(28px, 5vw, 58px); border: 1px solid rgba(255,255,255,.55); border-radius: 24px; background: var(--panel); box-shadow: var(--shadow); backdrop-filter: blur(18px); }
+    .panel-heading h2 { margin: 0; color: var(--ink); font-size: clamp(1.8rem, 3vw, 2.55rem); line-height: 1.06; letter-spacing: -.045em; }
+    .panel-heading > p:last-child { margin: 14px 0 0; color: var(--muted); line-height: 1.6; }
+    .form-field { margin-top: 24px; }
+    .form-field label { display: block; margin-bottom: 9px; color: var(--ink); font-size: .86rem; font-weight: 750; }
+    .form-field input { width: 100%; min-height: 50px; border: 1px solid var(--line); border-radius: 12px; padding: 0 14px; color: var(--ink); background: rgba(255,255,255,.65); outline: 0; }
+    .form-field input::placeholder { color: #8b99aa; }
+    .form-field input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(36,107,219,.16); }
+    .password-field { position: relative; }
+    .password-field input { padding-right: 76px; }
+    .input-action { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); border: 0; border-radius: 8px; padding: 8px 10px; color: var(--blue); background: transparent; font-weight: 750; cursor: pointer; }
+    .input-action:hover, .input-action:focus-visible, .back-link:focus-visible, .brand-mark:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+    .error-message { min-height: 20px; margin: 14px 0 0; color: var(--danger); font-size: .86rem; font-weight: 700; }
+    .button { width: 100%; min-height: 52px; margin-top: 8px; border: 0; border-radius: 12px; padding: 0 18px; font-weight: 800; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+    .button-primary { color: #fff; background: linear-gradient(135deg, #246bdb, #174ba9); box-shadow: 0 12px 22px rgba(36,107,219,.25); }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 16px 28px rgba(36,107,219,.3); }
+    .button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+    .back-link { display: inline-block; margin-top: 24px; color: var(--blue); font-size: .88rem; font-weight: 750; text-decoration: none; }
+    @media (prefers-color-scheme: dark) { :root { --ink: #edf4ff; --muted: #a5b5ca; --paper: #0d1728; --panel: rgba(17,30,50,.9); --line: #30435d; --shadow: 0 24px 70px rgba(0,0,0,.35); } body { background: radial-gradient(circle at 8% 10%, #153c4a 0, transparent 28%), linear-gradient(135deg, #07101e 0 42%, #102d4c 42% 100%); } .form-field input { background: rgba(7,16,30,.45); } }
+    @media (max-width: 760px) { .login-layout { grid-template-columns: 1fr; gap: 28px; padding: 28px 18px; } .login-intro { min-height: auto; gap: 56px; } .login-intro h1 { font-size: clamp(3rem, 16vw, 5rem); } .intro-copy { font-size: .95rem; } .login-panel { padding: 28px 22px; } }
+    @media (max-width: 390px) { .login-layout { padding: 20px 14px; } .login-panel { border-radius: 18px; padding: 24px 18px; } }
+  </style>
+</head>
+<body class="admin-login-page">
+  <main class="login-layout">
+    <section class="login-intro">
+      <a class="brand-mark" href="/">SOMALINET <span>OPS</span></a>
+      <div>
+        <p class="eyebrow">Control center</p>
+        <h1>Keep every connection moving.</h1>
+        <p class="intro-copy">A private workspace for monitoring customers, plans, payments, and live hotspot activity.</p>
+      </div>
+      <p class="intro-foot">Authorized personnel only</p>
+    </section>
+    <section class="login-panel" aria-labelledby="login-title">
+      <div class="panel-heading">
+        <p class="eyebrow">Administrator access</p>
+        <h2 id="login-title">Sign in to SomaliNet</h2>
+        <p>Use the administrator account provisioned by your deployment team.</p>
+      </div>
+      <form id="admin-login-form" novalidate>
+        <div class="form-field">
+          <label for="admin-email">Email address</label>
+          <input id="admin-email" name="email" type="email" autocomplete="username" required placeholder="admin@example.com">
+        </div>
+        <div class="form-field">
+          <label for="admin-password">Password</label>
+          <div class="password-field">
+            <input id="admin-password" name="password" type="password" autocomplete="current-password" required minlength="12" placeholder="Enter your password">
+            <button id="toggle-password" type="button" class="input-action" aria-label="Show password">Show</button>
+          </div>
+        </div>
+        <p id="login-error" class="error-message" role="alert"></p>
+        <button id="login-submit" class="button button-primary" type="submit">Sign in <span aria-hidden="true">-&gt;</span></button>
+      </form>
+      <a class="back-link" href="/">&lt;- Return to customer portal</a>
+    </section>
+  </main>
+  <script src="/admin.js"></script>
+</body>
+</html>

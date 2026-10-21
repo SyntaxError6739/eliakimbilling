@@ -46,6 +46,13 @@ async function removeHotspotUser(username) {
   });
 }
 
+async function findHotspotUser(username) {
+  return withRouter(async (api) => {
+    const results = await api.write('/ip/hotspot/user/print', ['?name=' + username]);
+    return results.length > 0 ? results[0] : null;
+  });
+}
+
 async function getActiveSession(username) {
   return withRouter(async (api) => {
     const results = await api.write('/ip/hotspot/active/print', ['?user=' + username]);
@@ -58,4 +65,4 @@ function hoursToUptime(hours) {
   return `${h}:00:00`;
 }
 
-module.exports = { createHotspotUser, removeHotspotUser, getActiveSession, hoursToUptime };
+module.exports = { createHotspotUser, removeHotspotUser, findHotspotUser, getActiveSession, hoursToUptime };

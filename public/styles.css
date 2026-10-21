@@ -20,7 +20,7 @@ html, body {
   margin: 0;
   min-height: 100%;
   background: #0a0d14;
-  font-family: 'Manrope', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
 }
 
@@ -66,6 +66,51 @@ button {
   text-align: center;
 }
 
+.site-header {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-row {
+  min-height: 44px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding-bottom: 8px;
+}
+
+.language-switch {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.language-switch button {
+  min-width: 44px;
+  height: 36px;
+  padding: 0 8px;
+  border: 2px solid #ffd400;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #0b2a6f;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.language-switch button[aria-pressed="true"] {
+  background: #ffd400;
+  color: #0b2a6f;
+  font-weight: 800;
+}
+
+.language-switch button:hover,
+.language-switch button:focus-visible {
+  outline: 3px solid #ffd400;
+  outline-offset: 2px;
+}
+
 .brand-panel h1 {
   margin: 0;
   font-size: clamp(2.2rem, 5vw, 3.2rem);
@@ -82,6 +127,7 @@ button {
   font-size: clamp(2rem, 4vw, 2.5rem);
   font-weight: 900;
   letter-spacing: -0.05em;
+  overflow-wrap: anywhere;
 }
 
 .plans-list {
@@ -123,6 +169,7 @@ button {
   color: rgba(255,255,255,0.82);
   font-size: 0.95rem;
   font-weight: 600;
+  line-height: 1.45;
 }
 
 .account-tools {

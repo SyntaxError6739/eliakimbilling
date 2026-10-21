@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "migrate": "node db/migrate.js"
+    "migrate": "node db/migrate.js",
+    "create-admin": "node db/create-admin.js",
+    "test": "node --test"
   },
   "dependencies": {
     "axios": "^1.6.0",

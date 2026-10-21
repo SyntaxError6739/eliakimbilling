@@ -40,7 +40,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
 app.use(cors({ origin: process.env.PORTAL_ORIGIN || '*' }));
 app.use(morgan('combined'));
-app.use(express.json());
+app.use(express.json({
+  verify: (req, _res, buffer) => {
+    if (req.originalUrl.split('?')[0] === '/api/pay/webhook') req.rawBody = Buffer.from(buffer);
+  },
+}));
 
 // Rate limiting — protect payment & auth endpoints
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: 'Codsiyo badan — fadlan sug.' });
@@ -54,6 +58,9 @@ app.use('/api/session',              sessionRoutes);
 app.use('/api/admin',                adminRoutes);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok', ts: new Date() }));
+
+app.get('/admin/login', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-login.html')));
+app.get('/admin/dashboard', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html')));
 
 // ── Global error handler ──────────────────────────────────────────────────────
 app.use((err, _req, res, _next) => {

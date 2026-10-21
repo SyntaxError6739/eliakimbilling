@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101c2d">
+  <title>Admin dashboard | SomaliNet</title>
+  <style>
+    :root { color-scheme: light dark; --ink: #172235; --muted: #6a788d; --paper: #f4f7fb; --panel: #fff; --panel-soft: #f8fafc; --line: #e1e8f0; --navy: #10213d; --navy-soft: #183052; --blue: #246bdb; --cyan: #42bfb7; --green: #168c6b; --red: #b42318; --amber: #a15c00; --shadow: 0 18px 48px rgba(16, 36, 67, .08); }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body { margin: 0; color: var(--ink); background: radial-gradient(circle at 100% 0, #e0f2ef 0, transparent 26%), var(--paper); font-family: "Segoe UI", system-ui, sans-serif; }
+    button, input, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+    .dashboard-shell { display: grid; grid-template-columns: 258px minmax(0, 1fr); min-height: 100vh; }
+    .sidebar { display: flex; flex-direction: column; min-height: 100vh; padding: 28px 18px 20px; color: #fff; background: linear-gradient(180deg, #0d1d36, #142e50); }
+    .brand-mark { color: #fff; text-decoration: none; font-size: 1.08rem; font-weight: 800; letter-spacing: .12em; }
+    .brand-mark span { color: #7ce0d6; font-size: .68rem; letter-spacing: .16em; margin-left: 5px; }
+    .sidebar-user { display: flex; align-items: center; gap: 9px; min-width: 0; margin: 42px 10px 24px; color: #d0ddec; font-size: .86rem; font-weight: 650; overflow-wrap: anywhere; }
+    .status-dot { width: 9px; height: 9px; flex: 0 0 auto; border-radius: 50%; background: #69d6af; box-shadow: 0 0 0 5px rgba(105,214,175,.12); }
+    .side-nav { display: grid; gap: 5px; }
+    .nav-item { width: 100%; border: 1px solid transparent; border-radius: 10px; padding: 12px 13px; color: #9fb1c8; background: transparent; text-align: left; font-weight: 650; transition: .18s ease; }
+    .nav-item:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .nav-item.active { color: #fff; border-color: rgba(124,224,214,.24); background: linear-gradient(90deg, rgba(66,191,183,.2), rgba(255,255,255,.06)); box-shadow: inset 3px 0 #42bfb7; }
+    .sidebar-bottom { display: grid; gap: 12px; margin-top: auto; padding-top: 28px; }
+    .sidebar-bottom a, .logout-button { border: 0; color: #9fb1c8; background: transparent; text-align: left; text-decoration: none; font-size: .86rem; font-weight: 650; }
+    .sidebar-bottom a:hover, .logout-button:hover { color: #fff; }
+    .dashboard-main { min-width: 0; padding: clamp(24px, 4vw, 52px); }
+    .topbar, .panel-title, .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+    .topbar { align-items: flex-end; margin-bottom: 28px; }
+    .eyebrow { margin: 0 0 9px; color: var(--blue); font-size: .7rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1, h2 { margin: 0; letter-spacing: -.045em; }
+    h1 { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1; }
+    h2 { font-size: clamp(1.25rem, 2vw, 1.7rem); }
+    .last-updated { color: var(--muted); font-size: .82rem; }
+    .notice { min-height: 20px; margin: 0 0 18px; color: var(--muted); font-size: .86rem; }
+    .error-message { color: var(--red); font-weight: 700; }
+    .success-message { color: var(--green); font-weight: 700; }
+    .dashboard-section { display: none; animation: rise .22s ease both; }
+    .active-section { display: block; }
+    @keyframes rise { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .metric-card, .panel { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow); }
+    .metric-card { min-width: 0; padding: 20px; }
+    .metric-card.accent { color: #fff; border-color: transparent; background: linear-gradient(135deg, #246bdb, #183d86); }
+    .metric-card span, .metric-card small { display: block; color: var(--muted); font-size: .78rem; font-weight: 650; }
+    .metric-card.accent span, .metric-card.accent small { color: #d6e4ff; }
+    .metric-card strong { display: block; margin: 14px 0 7px; font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -.04em; overflow-wrap: anywhere; }
+    .content-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 18px; }
+    .panel { min-width: 0; padding: 22px; }
+    .panel-title { align-items: center; margin-bottom: 18px; }
+    .section-heading { margin-bottom: 18px; }
+    .text-button, .primary-button { border: 0; border-radius: 9px; padding: 10px 14px; font-weight: 750; }
+    .text-button { color: var(--blue); background: transparent; }
+    .text-button:hover { background: rgba(36,107,219,.1); }
+    .primary-button { color: #fff; background: linear-gradient(135deg, #246bdb, #174ba9); box-shadow: 0 8px 18px rgba(36,107,219,.2); }
+    .primary-button:hover { transform: translateY(-1px); }
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+    th { padding: 11px 12px; color: var(--muted); border-bottom: 1px solid var(--line); font-size: .7rem; letter-spacing: .08em; text-align: left; text-transform: uppercase; white-space: nowrap; }
+    td { padding: 14px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
+    tbody tr:hover { background: var(--panel-soft); }
+    td button { border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; color: var(--blue); background: transparent; font-size: .78rem; font-weight: 750; }
+    td button[data-toggle-customer], td button[data-toggle-plan] { color: var(--red); border-color: rgba(180,35,24,.25); background: rgba(180,35,24,.06); }
+    td select, .inline-form input, .admin-create-form input { min-height: 40px; border: 1px solid var(--line); border-radius: 9px; padding: 0 10px; color: var(--ink); background: var(--panel-soft); }
+    td select { max-width: 150px; }
+    .status { display: inline-block; border-radius: 999px; padding: 5px 9px; color: var(--green); background: rgba(22,140,107,.12); font-size: .72rem; font-weight: 800; }
+    .status.failed, .status.revoked { color: var(--red); background: rgba(180,35,24,.1); }
+    .status.pending { color: var(--amber); background: rgba(161,92,0,.12); }
+    .bar-list { display: grid; gap: 18px; }
+    .bar-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 7px; font-size: .85rem; }
+    .bar-track { height: 8px; overflow: hidden; border-radius: 99px; background: var(--line); }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #42bfb7, #246bdb); }
+    .inline-form { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+    .inline-form label { display: grid; gap: 7px; color: var(--muted); font-size: .78rem; font-weight: 700; }
+    .inline-form input { min-width: min(100%, 280px); }
+    .admin-create-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-soft); }
+    .admin-create-form label { display: grid; gap: 7px; color: var(--muted); font-size: .78rem; font-weight: 700; }
+    .admin-create-form .primary-button, .admin-create-form .notice { align-self: end; }
+    .audit-list { display: grid; gap: 0; }
+    .audit-item { display: grid; gap: 5px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: .82rem; }
+    .audit-item strong { color: var(--ink); }
+    .audit-item span, .audit-item small { color: var(--muted); }
+    .empty { color: var(--muted); font-size: .86rem; }
+    @media (prefers-color-scheme: dark) { :root { --ink: #eaf1fb; --muted: #9aabc1; --paper: #0b1423; --panel: #111f33; --panel-soft: #16263d; --line: #2b3d56; --shadow: 0 18px 48px rgba(0,0,0,.24); } body { background: radial-gradient(circle at 100% 0, #123d45 0, transparent 26%), var(--paper); } }
+    @media (max-width: 1080px) { .dashboard-shell { grid-template-columns: 210px minmax(0, 1fr); } .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .content-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .dashboard-shell { display: block; } .sidebar { min-height: 0; padding: 18px; } .sidebar-user { margin: 24px 4px 15px; } .side-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); } .sidebar-bottom { grid-template-columns: 1fr 1fr; margin-top: 18px; padding-top: 0; } .dashboard-main { padding: 24px 16px 40px; } .topbar { align-items: flex-start; flex-direction: column; gap: 10px; } .admin-create-form { grid-template-columns: 1fr; } .panel { padding: 16px; } }
+    @media (max-width: 420px) { .metric-grid { gap: 9px; } .metric-card { padding: 14px; } .metric-card strong { font-size: 1.35rem; } .side-nav { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="dashboard-page">
+  <div class="dashboard-shell">
+    <aside class="sidebar">
+      <a class="brand-mark" href="/">SOMALINET <span>OPS</span></a>
+      <div class="sidebar-user"><span class="status-dot"></span><span id="admin-name">Checking access...</span></div>
+      <nav class="side-nav" aria-label="Admin sections">
+        <button class="nav-item active" data-section="overview">Overview</button>
+        <button class="nav-item" data-section="customers">Customers</button>
+        <button class="nav-item" data-section="plans">Packages & pricing</button>
+        <button class="nav-item" data-section="payments">Payments</button>
+        <button class="nav-item" data-section="sessions">Live sessions</button>
+        <button class="nav-item" data-section="reports">Reports & access</button>
+      </nav>
+      <div class="sidebar-bottom"><a href="/">Customer portal</a><button id="logout-button" class="logout-button">Sign out</button></div>
+    </aside>
+    <main class="dashboard-main">
+      <header class="topbar"><div><p class="eyebrow">SomaliNet operations</p><h1 id="section-title">Overview</h1></div><span id="last-updated" class="last-updated"></span></header>
+      <div id="dashboard-error" class="notice error-message" role="alert"></div>
+      <section id="section-overview" class="dashboard-section active-section">
+        <div class="metric-grid"><article class="metric-card accent"><span>Today's revenue</span><strong id="metric-revenue">--</strong><small>Confirmed payments only</small></article><article class="metric-card"><span>Transactions today</span><strong id="metric-transactions">--</strong><small>Successful payments</small></article><article class="metric-card"><span>Active sessions</span><strong id="metric-sessions">--</strong><small>Currently unexpired</small></article><article class="metric-card"><span>Customers</span><strong id="metric-customers">--</strong><small>Registered users</small></article></div>
+        <div class="content-grid"><article class="panel"><div class="panel-title"><div><p class="eyebrow">Live view</p><h2>Active hotspot sessions</h2></div><button class="text-button" data-section-link="sessions">View all</button></div><div id="overview-sessions" class="table-wrap"></div></article><article class="panel"><div class="panel-title"><div><p class="eyebrow">Plan mix</p><h2>Revenue by package</h2></div></div><div id="plan-mix" class="bar-list"></div></article></div>
+      </section>
+      <section id="section-customers" class="dashboard-section"><div class="section-heading"><div><p class="eyebrow">Customer directory</p><h2>Registered customers</h2></div></div><article class="panel"><form id="customer-search-form" class="inline-form"><input name="search" placeholder="Search name, phone, or email"><button type="submit" class="text-button">Search</button></form><form id="customer-create-form" class="admin-create-form"><label>Name<input name="name" required></label><label>Phone<input name="phone" required></label><label>Email<input name="email" type="email"></label><label>Password<input name="password" type="password" minlength="12" required></label><button type="submit" class="primary-button">Create customer</button><p id="customer-message" class="notice" role="status"></p></form><div id="customers-table" class="table-wrap"></div></article></section>
+      <section id="section-plans" class="dashboard-section"><div class="section-heading"><div><p class="eyebrow">Catalog</p><h2>Internet packages and pricing</h2></div></div><article class="panel"><form id="package-form" class="admin-create-form"><input type="hidden" name="id"><label>Name<input name="name" required></label><label>Description<input name="description"></label><label>Price<input name="price" type="number" min="0" step="0.01" required></label><label>Currency<input name="currency" value="USD" maxlength="3" required></label><label>Duration hours<input name="duration_h" type="number" min="1" required></label><label>Router profile<input name="mikrotik_profile" required></label><button type="submit" class="primary-button">Save package</button><p id="package-message" class="notice" role="status"></p></form><div id="plans-table" class="table-wrap"></div></article></section>
+      <section id="section-payments" class="dashboard-section"><div class="section-heading"><div><p class="eyebrow">Ledger</p><h2>Transaction history</h2></div></div><article class="panel"><div id="payments-table" class="table-wrap"></div></article></section>
+      <section id="section-sessions" class="dashboard-section"><div class="section-heading"><div><p class="eyebrow">Network</p><h2>Active hotspot sessions</h2></div></div><article class="panel"><div id="sessions-table" class="table-wrap"></div></article></section>
+      <section id="section-reports" class="dashboard-section"><div class="content-grid"><article class="panel"><div class="panel-title"><div><p class="eyebrow">Authorized access</p><h2>Administrators</h2></div></div><form id="add-admin-form" class="admin-create-form"><label>Name<input name="name" required></label><label>Email<input name="email" type="email" required></label><label>Phone<input name="phone" type="tel" required></label><label>Password<input name="password" type="password" minlength="12" required></label><button type="submit" class="primary-button">Add administrator</button><p id="add-admin-message" class="notice" role="status"></p></form><form id="remove-admin-form" class="inline-form"><label>Original-admin OTP approval<input name="otp" type="password" required></label><button type="submit" class="text-button">Remove selected admin</button><p id="remove-admin-message" class="notice" role="status"></p></form><div id="admins-table" class="table-wrap"></div></article><article class="panel"><div class="panel-title"><div><p class="eyebrow">Traceability</p><h2>Audit activity</h2></div></div><div id="audit-table" class="audit-list"></div></article></div></section>
+    </main>
+  </div>
+  <script src="/admin.js"></script>
+</body>
+</html>

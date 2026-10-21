@@ -7,12 +7,12 @@
 
 const express = require('express');
 const { query } = require('../db');
-const { authMiddleware } = require('../middleware/auth');
+const { authMiddleware, customerOnly } = require('../middleware/auth');
 const { deactivateSession } = require('../services/session');
 
 const router = express.Router();
 
-router.get('/status', authMiddleware, async (req, res, next) => {
+router.get('/status', authMiddleware, customerOnly, async (req, res, next) => {
   try {
     const { rows } = await query(
       `SELECT s.id, s.mikrotik_user, s.ip_address, s.mac_address, s.started_at, s.expires_at,
@@ -34,12 +34,12 @@ router.get('/status', authMiddleware, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.post('/logout', authMiddleware, async (req, res, next) => {
+router.post('/logout', authMiddleware, customerOnly, async (req, res, next) => {
   try {
     const { sessionId } = req.body;
     if (!sessionId) return res.status(400).json({ error: 'sessionId ayaa looga baahan yahay' });
 
-    await deactivateSession(sessionId);
+    await deactivateSession(sessionId, req.user.userId);
     res.json({ message: 'Session waa la xidhay' });
   } catch (err) { next(err); }
 });
